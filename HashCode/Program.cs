@@ -19,15 +19,10 @@ namespace HashCode
             {
                 var pictures = Read(file);
 
-                var slides = Process(pictures);
+                var slides = Process.Run(pictures);
 
                 Write(slides, file);
             }
-        }
-
-        static List<Slide> Process(List<Picture> pictures)
-        {
-            return new List<Slide>();
         }
 
         static void Write(List<Slide> slides, string name)
@@ -74,27 +69,5 @@ namespace HashCode
 
             return result;
         }
-    }
-
-    enum Orientation
-    {
-        Vertical,
-        Horizontal
-    }
-
-    class Picture
-    {
-        public int Id { get; set; }
-        
-        public Orientation Orientation { get; set; }
-
-        public HashSet<string> Tags { get; set; }
-    }
-
-    class Slide
-    {
-        public int Id1 { get; set; } = -1;
-
-        public int Id2 { get; set; } = -2;
     }
 }
