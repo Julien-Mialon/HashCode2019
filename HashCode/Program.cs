@@ -9,9 +9,48 @@ namespace HashCode
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            List<string> files = new List<string>
+            {
+                "../a_example.txt",
+                "../c_memorable_moments.txt"
+            };
+
+            foreach (string file in files)
+            {
+                var pictures = Read(file);
+
+                var slides = Process(pictures);
+
+                Write(slides, file);
+            }
         }
 
+        static List<Slide> Process(List<Picture> pictures)
+        {
+            return new List<Slide>();
+        }
+
+        static void Write(List<Slide> slides, string name)
+        {
+            List<string> result = new List<string>
+            {
+                slides.Count.ToString()
+            };
+
+
+            result.AddRange(slides.Select(x =>
+            {
+                if (x.Id2 >= 0)
+                {
+                    return $"{x.Id1} {x.Id2}";
+                }
+
+                return x.Id1.ToString();
+            }));
+
+            File.WriteAllLines($"{name}.out", result);
+        }
+        
         static List<Picture> Read(string file)
         {
             string[] lines = File.ReadAllLines(file);
