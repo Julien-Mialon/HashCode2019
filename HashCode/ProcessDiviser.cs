@@ -22,13 +22,16 @@ namespace HashCode
 
             
 
-            int count = 32;
+            int count = 16;
 
             int itemCount = slidePool.Length / count;
 
-            int offset = 0;
-            for (int i = 0; i < count; ++i)
+            //int offset = 0;
+            object mutex = new  object();
+            Parallel.For(0, count, i => 
             {
+                
+                int offset = i*itemCount;
                 Console.WriteLine($"Iteration: {i}");
                 List<Slide> group = new List<Slide>();
 
@@ -45,11 +48,13 @@ namespace HashCode
                 var graph = BuildGraph(group.ToArray());
                 Console.WriteLine("process"         );
                 var result = Parcours(graph);
-                
-                slides.AddRange(result.result);
-                
-                offset += itemCount;
-            }
+
+                lock (mutex)
+                {
+                    slides.AddRange(result.result);
+                }
+
+            });
             
             /*
             Node[] nodes = BuildGraph(slidePool);
