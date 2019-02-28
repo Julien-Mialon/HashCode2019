@@ -22,7 +22,7 @@ namespace HashCode
 
             
 
-            int count = 8;
+            int count = 32;
 
             int itemCount = slidePool.Length / count;
 
@@ -143,7 +143,7 @@ namespace HashCode
             Node[] nodes = slides.Select(x => new Node(x)).ToArray();
             
             #region implem B
-            /*
+            //*
             Dictionary<Slide, Node> nodeDictionary = nodes.ToDictionary(x => x.Slide, x => x);
             Dictionary<string, List<Node>> result = slides
                 .SelectMany(slide => slide.Tags.Select(tag => (slide, tag)))
@@ -180,7 +180,7 @@ namespace HashCode
             
             #region implem A / C
             
-            //*
+            /*
             for(int i = 0 ; i < nodes.Length ; ++i)
             {
                 //Console.WriteLine($"Assemble: {i}");
@@ -211,6 +211,15 @@ namespace HashCode
         private static HashSet<Slide> AssembleVerticals(HashSet<Picture> pictures)
         {
             HashSet<Slide> slides = new HashSet<Slide>(pictures.Count / 2);
+            List<Picture> pictureList = new List<Picture>(pictures);
+
+            for (int i = 0; i < pictureList.Count; i += 2)
+            {
+                slides.Add(new Slide(pictureList[i], pictureList[i + 1]));
+            }
+            
+            /*
+            HashSet<Slide> slides = new HashSet<Slide>(pictures.Count / 2);
 
             List<Picture> pictureList = new List<Picture>(pictures);
             bool[] used = new bool[pictures.Count];
@@ -224,11 +233,37 @@ namespace HashCode
 
             while (remainingCount > 1)
             {
-                for( ; used[nextOffset] )
+                for (; used[nextOffset]; nextOffset++) ;
+
+                Console.WriteLine(remainingCount);
+                Picture current = pictureList[nextOffset];
+                used[nextOffset] = true;
+                nextOffset++;
+                
+                int minScore = int.MaxValue;
+                Picture bestPicture = null;
+                int bestIndex = 0;
+                
+                for (var i = nextOffset; i < pictureList.Count; i++)
+                {
+                    Picture picture = pictureList[i];
+                    int score = ScoreVerticalAssociation(current.Tags, picture.Tags);
+
+                    if (score < minScore)
+                    {
+                        minScore = score;
+                        bestPicture = picture;
+                        bestIndex = i;
+                    }
+                }
+
+                used[bestIndex] = true;
+                slides.Add(new Slide(current, bestPicture));
                 
                 remainingCount -= 2;
             }
-            
+            */
+            /*
             while (pictures.Count > 1)
             {
                 var p1 = pictures.First();
@@ -252,13 +287,22 @@ namespace HashCode
 
                 slides.Add(new Slide(p1, bestPicture));
             }
-
+            */
             return slides;
         }
 
         public static int ScoreVerticalAssociation(HashSet<string> left, HashSet<string> right)
         {
-            return left.Count(right.Contains);
+            int res = 0;
+            foreach (var s in left)
+            {
+                if (right.Contains(s))
+                {
+                    res++;
+                }
+            }
+
+            return res;
         }
 
         public static int Score(HashSet<string> left, HashSet<string> right)

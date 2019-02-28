@@ -25,7 +25,13 @@ namespace HashCode
             Id1 = picture1.Id;
             Id2 = picture2.Id;
 
-            Tags = picture1.Tags.Concat(picture2.Tags).ToHashSet();
+            var tags = picture1.Tags;
+            foreach (string tag in picture2.Tags)
+            {
+                tags.Add(tag);
+            }
+
+            Tags = tags;
         }
     }
 }
