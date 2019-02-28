@@ -6,7 +6,11 @@ namespace HashCode
     {
         public static List<Slide> Run(List<Picture> pictures)
         {
-            return new List<Slide>();
+            List<Slide> slides = new List<Slide>();
+
+                
+            
+            return slides;
         }
     }
 }
