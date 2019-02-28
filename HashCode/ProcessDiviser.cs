@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HashCode
 {
-    class Process
+    class ProcessDiviser
     {
         public static (List<Slide> result, int score) Run(List<Picture> pictures)
         {
@@ -20,53 +20,43 @@ namespace HashCode
                 .Concat(AssembleVerticals(pictures.Where(x => x.Orientation == Orientation.Vertical).ToHashSet()))
                 .ToArray();
 
-            /*
-            bool[] used = new bool[slidePool.Length];
-            for (var i = 0; i < slidePool.Length; i++)
+            
+
+            int count = 8;
+
+            int itemCount = slidePool.Length / count;
+
+            int offset = 0;
+            for (int i = 0; i < count; ++i)
             {
-                used[i] = false;
+                Console.WriteLine($"Iteration: {i}");
+                List<Slide> group = new List<Slide>();
+
+                if (i == count - 1)
+                {
+                    group.AddRange(slidePool.Skip(offset));
+                }
+                else
+                {
+                    group.AddRange(slidePool.Skip(offset).Take(itemCount));
+                }
+
+                Console.WriteLine("graph");
+                var graph = BuildGraph(group.ToArray());
+                Console.WriteLine("process"         );
+                var result = Parcours(graph);
+                
+                slides.AddRange(result.result);
+                
+                offset += itemCount;
             }
-
-            Slide current = slidePool.First();
-            slides.Add(current);
-            used[0] = true;
-
-            int remainingCount = used.Length - 1;
-            */
-            Node[] nodes = BuildGraph(slidePool);
             
             /*
-            Console.WriteLine("Find slides");
-            while (remainingCount > 0)
-            {
-                int maxScore = -1;
-                int maxIndex = -1;
-
-                Console.WriteLine($"Remaining: {remainingCount}");
-                for (var i = 0; i < slidePool.Length; i++)
-                {
-                    if (used[i])
-                    {
-                        continue;
-                    }
-                    
-                    int score = Score(current.Tags, slidePool[i].Tags);
-                    //Console.WriteLine($"Score: {score}");
-
-                    if (score > maxScore)
-                    {
-                        maxScore = score;
-                        maxIndex = i;
-                    }
-                }
-                
-                slides.Add(slidePool[maxIndex]);
-                used[maxIndex] = true;
-                remainingCount--;
-            }
-            */
-
+            Node[] nodes = BuildGraph(slidePool);
+            
             return Parcours(nodes);
+            */
+            return (slides, 100);
         }
 
         private static (List<Slide> result, int score) Parcours(Node[] nodes)
@@ -152,10 +142,8 @@ namespace HashCode
             Stopwatch watcher = Stopwatch.StartNew();
             Node[] nodes = slides.Select(x => new Node(x)).ToArray();
             
-            
-            
             #region implem B
-            
+            /*
             Dictionary<Slide, Node> nodeDictionary = nodes.ToDictionary(x => x.Slide, x => x);
             Dictionary<string, List<Node>> result = slides
                 .SelectMany(slide => slide.Tags.Select(tag => (slide, tag)))
@@ -187,12 +175,12 @@ namespace HashCode
                     }
                 }
             }
-            
+            // */
             #endregion
             
             #region implem A / C
             
-            /*
+            //*
             for(int i = 0 ; i < nodes.Length ; ++i)
             {
                 //Console.WriteLine($"Assemble: {i}");
@@ -211,7 +199,7 @@ namespace HashCode
                     }
                 }
             }
-            */
+            // */
             
             #endregion
 
@@ -224,6 +212,23 @@ namespace HashCode
         {
             HashSet<Slide> slides = new HashSet<Slide>(pictures.Count / 2);
 
+            List<Picture> pictureList = new List<Picture>(pictures);
+            bool[] used = new bool[pictures.Count];
+            for (var i = 0; i < used.Length; i++)
+            {
+                used[i] = false;
+            }
+
+            int remainingCount = pictures.Count;
+            int nextOffset = 0;
+
+            while (remainingCount > 1)
+            {
+                for( ; used[nextOffset] )
+                
+                remainingCount -= 2;
+            }
+            
             while (pictures.Count > 1)
             {
                 var p1 = pictures.First();
@@ -276,24 +281,6 @@ namespace HashCode
 
             rightNotLeft = right.Count - leftAndRight;
             return Math.Min(leftNotRight, Math.Min(leftAndRight, rightNotLeft));
-        }
-    }
-
-    class Node
-    {
-        public Slide Slide { get; set; }
-
-        public bool Used => Slide.Used;
-
-        public HashSet<Node> EdgeNodes { get; set; }
-
-        public List<(Node next, int score)> Edges { get; set; }
-
-        public Node(Slide slide)
-        {
-            Slide = slide;
-            Edges = new List<(Node next, int score)>();
-            EdgeNodes = new HashSet<Node>();
         }
     }
 }
