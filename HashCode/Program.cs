@@ -5,69 +5,79 @@ using System.Linq;
 
 namespace HashCode
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            List<string> files = new List<string>
-            {
-                "../a_example.txt",
-                "../c_memorable_moments.txt"
-            };
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			List<string> files = new List<string>
+			{
+				"a_example.txt",
+				"c_memorable_moments.txt",
+				//"b_lovely_landscapes.txt",
+				"d_pet_pictures.txt",
+				//"e_shiny_selfies.txt",
+			};
 
-            foreach (string file in files)
-            {
-                var pictures = Read(file);
+			files.AsParallel().ForAll(file =>
+			{
+				var pictures = Read(file);
 
-                var slides = Process.Run(pictures);
+				//var hash = new HashSet<string>();
+				//pictures.ForEach(x => x.TagList.ForEach(t => hash.Add(t)));
 
-                Write(slides, file);
-            }
-        }
+				//Console.WriteLine($"{file} : {hash.Count} {pictures.Sum(x => x.Tags.Count)}");
 
-        static void Write(List<Slide> slides, string name)
-        {
-            List<string> result = new List<string>
-            {
-                slides.Count.ToString()
-            };
+				var slides = new Process().Run(pictures);
+
+				Write(slides, file);
+			});
+
+			Console.Read();
+		}
+
+		static void Write(List<Slide> slides, string name)
+		{
+			List<string> result = new List<string>
+			{
+				slides.Count.ToString()
+			};
 
 
-            result.AddRange(slides.Select(x =>
-            {
-                if (x.Id2 >= 0)
-                {
-                    return $"{x.Id1} {x.Id2}";
-                }
+			result.AddRange(slides.Select(x =>
+			{
+				if (x.Id2 >= 0)
+				{
+					return $"{x.Id1} {x.Id2}";
+				}
 
-                return x.Id1.ToString();
-            }));
+				return x.Id1.ToString();
+			}));
 
-            File.WriteAllLines($"{name}.out", result);
-        }
-        
-        static List<Picture> Read(string file)
-        {
-            string[] lines = File.ReadAllLines(file);
-            List<Picture> result = new List<Picture>(100_000);
+			File.WriteAllLines($"{name}.out", result);
+		}
 
-            for (int i = 1; i < lines.Length; ++i)
-            {
-                var columns = lines[i].Split(' ');
+		static List<Picture> Read(string file)
+		{
+			string[] lines = File.ReadAllLines(file);
+			List<Picture> result = new List<Picture>(100_000);
 
-                var orientation = columns[0] == "H" ? Orientation.Horizontal : Orientation.Vertical;
+			for (int i = 1; i < lines.Length; ++i)
+			{
+				var columns = lines[i].Split(' ');
 
-                Picture p = new Picture
-                {
-                    Id = i - 1,
-                    Orientation = orientation,
-                    Tags = columns.Skip(2).ToHashSet(),
-                };
+				var orientation = columns[0] == "H" ? Orientation.Horizontal : Orientation.Vertical;
 
-                result.Add(p);
-            }
+				Picture p = new Picture
+				{
+					Id = i - 1,
+					Orientation = orientation,
+					Tags = columns.Skip(2).ToHashSet(),
+				};
 
-            return result;
-        }
-    }
+				result.Add(p);
+			}
+
+			return result;
+		}
+	}
 }

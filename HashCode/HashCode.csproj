@@ -1,8 +1,34 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.1</TargetFramework>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="a_example.txt" />
+      <None Remove="b_lovely_landscapes.txt" />
+      <None Remove="c_memorable_moments.txt" />
+      <None Remove="d_pet_pictures.txt" />
+      <None Remove="e_shiny_selfies.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="a_example.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="b_lovely_landscapes.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="c_memorable_moments.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="d_pet_pictures.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="e_shiny_selfies.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 
 </Project>

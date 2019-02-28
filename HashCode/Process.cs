@@ -4,75 +4,102 @@ using System.Linq;
 
 namespace HashCode
 {
-    class Process
-    {
-        public static List<Slide> Run(List<Picture> pictures)
-        {
-            List<Slide> slides = new List<Slide>();
+	
 
-            HashSet<Picture> horizontal = pictures.Where(x => x.Orientation == Orientation.Horizontal).ToHashSet();
-            HashSet<Picture> vertical = pictures.Where(x => x.Orientation == Orientation.Vertical).ToHashSet();
+	class Process
+	{
+		public Dictionary<string, List<Picture>> _picturesListByTag = new Dictionary<string, List<Picture>>();
 
-            Picture first = horizontal.First();
-            horizontal.Remove(first);
-            Slide slide = new Slide(first);
-            slides.Add(slide);
+		public List<Slide> Run(List<Picture> pictures)
+		{
+			pictures.ForEach(p =>
+			{
+				p.TagList.ForEach(t =>
+				{
+					if(_picturesListByTag.TryGetValue(t, out var picList))
+					{
+						picList.Add(p);
+						picList.ForEach(p2 => p2.Add(p, Score));
+						//TODO CORRECT VERTICAL
+						//ici je les mets avec un mec dont il a au moins un tag en commun
+						//pas ouf parce qu'on s'en fiche (de cet heuristique) pour les verticaux
+					} else
+					{
+						_picturesListByTag.Add(t, new List<Picture>() { p });
+					}
+				});
+			});
 
-            while (horizontal.Count > 0 || vertical.Count > 0)
-            {
-                
-            }
-            
-            return slides;
-        }
+			Console.WriteLine($"END");
+			return new List<Slide>();
+		
+			//List<Slide> slides = new List<Slide>();
 
-        public static int Score(HashSet<string> left, HashSet<string> right)
-        {
-            int leftNotRight = 0;
-            int leftAndRight = 0;
-            int rightNotLeft = 0;
-            
-            foreach (string s in left)
-            {
-                if (right.Contains(s))
-                {
-                    leftAndRight++;
-                }
-                else
-                {
-                    leftNotRight++;
-                }
-            }
+			//HashSet<Picture> horizontal = pictures.Where(x => x.Orientation == Orientation.Horizontal).ToHashSet();
+			//HashSet<Picture> vertical = pictures.Where(x => x.Orientation == Orientation.Vertical).ToHashSet();
 
-            rightNotLeft = right.Count - leftAndRight;
+			//Picture first = horizontal.First();
+			//horizontal.Remove(first);
+			//Slide slide = new Slide(first);
+			//slides.Add(slide);
 
-            return Math.Min(leftNotRight, Math.Min(leftAndRight, rightNotLeft));
-        }
-        
-        public static int Score(HashSet<string> left, HashSet<string> right1, HashSet<string> right2)
-        {
-            int leftNotRight = 0;
-            int leftAndRight = 0;a
-            int rightNotLeft = 0;
-            
-            foreach (string s in left)
-            {
-                if (right1.Contains(s) || right2.Contains(s))
-                {
-                    leftAndRight++;
-                }
-                else
-                {
-                    leftNotRight++;
-                }
-            }
+			//while (horizontal.Count > 0 || vertical.Count > 0)
+			//{
 
-            int unionCount = right1.Count(right2.Contains);
-            
-            
-            rightNotLeft = right1.Count + right2.Count - leftAndRight - unionCount;
+			//}
 
-            return Math.Min(leftNotRight, Math.Min(leftAndRight, rightNotLeft));
-        }
-    }
+			//return slides;
+		}
+
+		public int Score(Picture p1, Picture p2) => Score(p1.Tags, p2.Tags);
+
+		public int Score(HashSet<string> left, HashSet<string> right)
+		{
+			int leftNotRight = 0;
+			int leftAndRight = 0;
+			int rightNotLeft = 0;
+
+			foreach (string s in left)
+			{
+				if (right.Contains(s))
+				{
+					leftAndRight++;
+				}
+				else
+				{
+					leftNotRight++;
+				}
+			}
+
+			rightNotLeft = right.Count - leftAndRight;
+
+			return Math.Min(leftNotRight, Math.Min(leftAndRight, rightNotLeft));
+		}
+
+		public int Score(HashSet<string> left, HashSet<string> right1, HashSet<string> right2)
+		{
+			int leftNotRight = 0;
+			int leftAndRight = 0;
+			int rightNotLeft = 0;
+
+			foreach (string s in left)
+			{
+				if (right1.Contains(s) || right2.Contains(s))
+				{
+					leftAndRight++;
+				}
+				else
+				{
+					leftNotRight++;
+				}
+			}
+
+			int unionCount = right1.Count(right2.Contains);
+
+
+			rightNotLeft = right1.Count + right2.Count - leftAndRight - unionCount;
+
+			return Math.Min(leftNotRight, Math.Min(leftAndRight, rightNotLeft));
+		}
+	}
 }
