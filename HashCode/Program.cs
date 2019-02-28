@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -12,15 +13,20 @@ namespace HashCode
             List<string> files = new List<string>
             {
                 "../a_example.txt",
-                "../c_memorable_moments.txt"
+                //"../b_lovely_landscapes.txt",
+                "../c_memorable_moments.txt",
+                //"../d_pet_pictures.txt",
+                //"../e_shiny_selfies.txt"
             };
 
             foreach (string file in files)
             {
                 var pictures = Read(file);
-
+                
+                Console.WriteLine($"Processing: {file}");
                 var slides = Process.Run(pictures);
 
+                Console.WriteLine($"Write: {file}");
                 Write(slides, file);
             }
         }

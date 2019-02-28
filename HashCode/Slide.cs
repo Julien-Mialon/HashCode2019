@@ -11,6 +11,8 @@ namespace HashCode
 
         public HashSet<string> Tags { get; set; }
         
+        public bool Used { get; set; }
+        
         public Slide(Picture picture)
         {
             Id1 = picture.Id;
